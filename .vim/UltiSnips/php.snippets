@@ -1,0 +1,115 @@
+
+global !p
+import json
+import os.path
+from datetime import datetime
+
+def psr4_namespace():
+	if not os.path.isfile('./composer.json'):
+		return ''
+
+	with open('./composer.json') as f:
+		data = json.load(f)
+		autoload = data.get('autoload', {})
+		psr4 = autoload.get('psr-4', {})
+		ls = list(psr4)
+
+		return ls[0] if 0 < len(ls) else ''
+
+def datetime_str():
+	return datetime.today().strftime('%Y-%m-%d')
+
+def year_str():
+	return datetime.today().strftime('%Y')
+
+endglobal
+
+snippet gxhead "Gambio copyright header" b
+/* --------------------------------------------------------------
+   ${1:`!p snip.rv=snip.basename`} `!p snip.rv = datetime_str()`
+   Gambio GmbH
+   http://www.gambio.de
+   Copyright (c) `!p snip.rv = year_str()` Gambio GmbH
+   Released under the GNU General Public License (Version 2)
+   [http://www.gnu.org/licenses/gpl-2.0.html]
+   --------------------------------------------------------------
+*/
+
+declare(strict_types=1);
+
+$0
+endsnippet
+
+snippet class "Class declaration template" b
+<?php
+/* --------------------------------------------------------------
+   $1.php `!p snip.rv = datetime_str()`
+   Gambio GmbH
+   http://www.gambio.de
+   Copyright (c) `!p snip.rv = year_str()` Gambio GmbH
+   Released under the GNU General Public License (Version 2)
+   [http://www.gnu.org/licenses/gpl-2.0.html]
+   --------------------------------------------------------------
+*/
+
+declare(strict_types=1);
+
+namespace `!p snip.rv = psr4_namespace()`${1:`!p
+relpath = os.path.relpath(path)
+m = re.search(r'[A-Z].+(?=/)', relpath)
+if m:
+	snip.rv = m.group().replace('/', '\\')
+`};
+
+/**
+ * Class ${1:`!p snip.rv=snip.basename`}
+ */
+class $1
+{
+	$2
+}
+endsnippet
+
+snippet construct "__construct()" b
+${1/(\w*) ?\$(\w+)(, )*/\n    private $1 $$2;/g}
+
+/**
+ * ${2:`!p snip.rv = snip.basename`} constructor.
+ *
+ * @param ${1/, /\n     * \@param /g}
+ */
+public function __construct(${1:$dependencies})
+{${1/\w* ?\$(\w+)(, )*/\n        $this->$1 = $$1;/g}
+}
+$0
+endsnippet
+
+snippet t "$this-> utility" !b
+$this->
+endsnippet
+
+snippet pubf "Public function" b
+/**
+ * ${3:undocumented function}
+ *
+ * @return ${4:void}
+ */
+public function ${1:name}(${2:$param})
+{
+${VISUAL}${5:return null;}
+}
+$0
+endsnippet
+
+snippet gm "PHP Class Getter" b
+/**
+ * Getter for $1
+ *
+ * @return ${2:string}
+ */
+public function get${1/\w+\s*/\u$0/}()`!p snip.rv = ': '+t[2]`
+{
+	return $this->$1;
+}
+endsnippet
+
