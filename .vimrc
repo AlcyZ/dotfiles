@@ -17,6 +17,9 @@ syntax enable
 
 filetype plugin indent on
 
+" change internal vim shell to fish
+set shell=/usr/bin/fish
+
 " automatically tries to source .vimrc from projects opened with `vim [path]`
 set exrc
 
@@ -141,7 +144,7 @@ au FileType php nnoremap gf :call composer#open_file#open(expand('<cword>'))<CR>
 nnoremap <Leader>o :Files<cr>
 
 " open terminal in current dir
-map <Leader>t :let $VIM_DIR=expand('%:p:h')<CR>:terminal<CR><c-w>x<c-w>j cd $VIM_DIR<CR>
+map <Leader>t :let $VIM_DIR=expand('%:p:h')<CR>:terminal<CR><c-w>x<c-w>j<c-w>7- cd $VIM_DIR<CR>
 
 " }}}
 
